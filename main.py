@@ -1,10 +1,11 @@
 from dotenv import load_dotenv
 import streamlit as st
-from google.generativeai import genai
+import google.generativeai as genai
 import streamlit as st
 import os
 from PIL import Image
 import pdf2image
+from urllib3 import response
 
 load_dotenv()
 
@@ -55,15 +56,59 @@ submit2 = st.button("How can I Improve my Skills?")
 submit3 = st.button("Percentage match")
 
 input_prompt1 = """
-You are an expereineced HR ith Tech Experience in the field of Data Sceince, Full Stack Web Development, 
-Big Data Enginnering, Data Analyst, your task is to review the provided resume against the job description for these profiles.
-Please shhare your professional evaluation on wheather the candidate's profile aligns with the above mentioned roles and profiles.
-Highlight the strengths and weaknesses of thhe applicant in relation to the specificed job requirements.
+You are an experienced HR professional with strong technical expertise in Data Science, 
+Full Stack Web Development, Big Data Engineering, and Data Analysis. Your task is to review 
+the candidate’s resume and provide a comprehensive professional evaluation of how well it aligns 
+with these roles. Highlight the candidate’s key strengths, relevant experience, and achievements, 
+as well as any notable gaps or weaknesses in relation to the skills and qualifications typically 
+required for these positions.
 """
 
+
 input_prompt2 = """
-You are an Technical Human Resorce Manager with expertise in the field of Data Science, your role is to scrutinize the resume
-in light of the job description provided. Share your insights on the candidate suitability for the role from an HR perspective.
-Addiotionally, offer advice on echancing the candidate's skills and identify ares for improvement.
+You are a seasoned Technical HR Manager specializing in Data Science, Full Stack Web Development, 
+Big Data Engineering, and Data Analysis. Review the candidate’s resume and identify specific areas 
+where the candidate can improve to become a stronger fit for these roles. Provide detailed, actionable 
+feedback on both technical and soft skills, and suggest relevant tools, technologies, certifications, 
+or learning paths that would enhance the candidate’s professional growth and employability.
 """
+
+
+input_prompt3 = """
+You are an expert Technical Recruiter with a deep understanding of hiring standards in Data Science, 
+Full Stack Web Development, Big Data Engineering, and Data Analysis roles. Evaluate the candidate’s 
+resume against the provided job description and determine how well it matches the requirements. 
+Provide a clear percentage match score (0–100%) and briefly explain what factors contributed most 
+to the score, including relevant skills, experience alignment, and areas that could be improved.
+"""
+
+
+if submit1:
+    if uploaded_file is not None:
+        pdf_content = input_df_setup(uploaded_file)
+        response = get_gemini_response(input_prompt1, pdf_content, input_text)
+        st.subheader("The Response is")
+        st.write(response)
+    else:
+        st.write("Please uplaod the resume")
+
+elif submit2:
+    if uploaded_file is not None:
+        pdf_content = input_df_setup(uploaded_file)
+        response = get_gemini_response(input_prompt2, pdf_content, input_text)
+        st.subheader("The Response is")
+        st.write(response)
+    else:
+        st.write("Please uplaod the resume")
+
+elif submit3:
+    if uploaded_file is not None:
+        pdf_content = input_df_setup(uploaded_file)
+        response = get_gemini_response(input_prompt3, pdf_content, input_text)
+        st.subheader("The Response is")
+        st.write(response)
+    else:
+        st.write("Please uplaod the resume")
+
+
 
