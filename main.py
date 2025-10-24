@@ -6,6 +6,8 @@ import os
 from PIL import Image
 import pdf2image
 from urllib3 import response
+import io
+import base64
 
 load_dotenv()
 
@@ -14,10 +16,10 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 
-def get_gemini_response(input, pdf_content, prompt):
-    model-genai.GenerativeModel("gemini-2.5-flash")
-    response=model.generate_content([input, pdf_content[0], prompt])
+def get_gemini_response(input_text, pdf_content, prompt):
+    response = model.generate_content([input_text, pdf_content[0], prompt])
     return response.text
+
 
 def input_df_setup(uploaded_file):
     if uploaded_file is not None:
