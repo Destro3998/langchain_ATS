@@ -7,6 +7,11 @@ import pdf2image
 import io
 import base64
 
+# Redirect to login if user not logged in
+if "user" not in st.session_state:
+    st.warning("⚠️ Please log in first to access the ATS Resume Analyzer.")
+    st.stop() 
+
 # setup
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -140,3 +145,4 @@ else:
                 file_name="cover_letter.txt",
                 mime="text/plain"
             )
+
