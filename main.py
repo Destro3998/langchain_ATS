@@ -145,4 +145,3 @@ else:
                 file_name="cover_letter.txt",
                 mime="text/plain"
             )
-
