@@ -7,11 +7,6 @@ import pdf2image
 import io
 import base64
 
-# Redirect to login if user not logged in
-if "user" not in st.session_state:
-    st.warning("⚠️ Please log in first to access the ATS Resume Analyzer.")
-    st.stop() 
-
 # setup
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -22,6 +17,24 @@ st.set_page_config(
     page_icon="📄",
     layout="wide"
 )
+
+
+if "authenticated" not in st.session_state or not st.session_state.authenticated:
+    st.switch_page("pages/login.py")
+
+st.title("🏠 Main Page")
+st.write(f"Hello, {st.session_state.get('username', 'Guest')}!")
+
+if st.button("Logout"):
+    st.session_state["authenticated"] = False
+    st.switch_page("pages/login.py")
+
+
+# Redirect to login if user not logged in
+if not st.session_state.get("authenticated"):
+    st.warning("⚠️ Please log in first...")
+    st.stop()
+
 
 # Helper Functions
 def get_gemini_response(input_text, pdf_content, prompt):
