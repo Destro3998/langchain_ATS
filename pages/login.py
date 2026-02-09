@@ -17,4 +17,9 @@ def login_page():
         else:
             st.error("Invalid username or password.")
 
+    st.divider()
+    st.write("Don't have an account?")
+    if st.button("Sign Up", key="signup_btn"):
+        st.switch_page("pages/signup.py")
+
 login_page()

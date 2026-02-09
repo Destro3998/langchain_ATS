@@ -1,16 +1,12 @@
 from dotenv import load_dotenv
 import streamlit as st
-import google.generativeai as genai
-import os
-from PIL import Image
-import pdf2image
-import io
-import base64
+
+from utils.gemini_utils import get_gemini_response
+from utils.pdf_utils import input_df_setup
+from utils.prompts import input_prompt1, input_prompt2, input_prompt3, input_prompt4
 
 # setup
 load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-model = genai.GenerativeModel("gemini-2.5-flash")
 
 st.set_page_config(
     page_title="ATS Resume Expert",
@@ -19,6 +15,7 @@ st.set_page_config(
 )
 
 
+## auth session
 if "authenticated" not in st.session_state or not st.session_state.authenticated:
     st.switch_page("pages/login.py")
 
@@ -28,33 +25,6 @@ st.write(f"Hello, {st.session_state.get('username', 'Guest')}!")
 if st.button("Logout"):
     st.session_state["authenticated"] = False
     st.switch_page("pages/login.py")
-
-
-# Redirect to login if user not logged in
-if not st.session_state.get("authenticated"):
-    st.warning("⚠️ Please log in first...")
-    st.stop()
-
-
-# Helper Functions
-def get_gemini_response(input_text, pdf_content, prompt):
-    response = model.generate_content([input_text, pdf_content[0], prompt])
-    return response.text
-
-def input_df_setup(uploaded_file):
-    if uploaded_file is not None:
-        images = pdf2image.convert_from_bytes(uploaded_file.read())
-        first_page = images[0]
-        img_byte_arr = io.BytesIO()
-        first_page.save(img_byte_arr, format="JPEG")
-        img_byte_arr = img_byte_arr.getvalue()
-        pdf_parts = [{
-            "mime_type": "image/jpeg",
-            "data": base64.b64encode(img_byte_arr).decode()
-        }]
-        return pdf_parts
-    else:
-        raise FileNotFoundError("No file uploaded")
 
 # Header
 st.markdown("""
@@ -91,6 +61,7 @@ st.markdown("""
 st.markdown("<h1 class='big-title'>📄 ATS Resume Analyzer</h1>", unsafe_allow_html=True)
 st.markdown("<p class='subtitle'>Upload your resume and job description to get AI-powered feedback, matching, and cover letter generation.</p>", unsafe_allow_html=True)
 
+
 # Input Section 
 col1, col2 = st.columns([1.3, 1])
 
@@ -101,12 +72,6 @@ with col2:
     uploaded_file = st.file_uploader("📎 Upload your resume (PDF)", type="pdf")
     if uploaded_file:
         st.success("✅ Resume uploaded successfully!")
-
-# Input Prompts
-input_prompt1 = """You are an experienced HR professional..."""
-input_prompt2 = """You are a seasoned Technical HR Manager..."""
-input_prompt3 = """You are an expert Technical Recruiter..."""
-input_prompt4 = """You are a professional career coach..."""
 
 # Buttons
 st.divider()
